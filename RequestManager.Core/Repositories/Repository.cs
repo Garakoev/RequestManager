@@ -6,12 +6,12 @@ using System.Linq.Expressions;
 
 namespace RequestManager.Core.Repositories;
 
-public abstract class Repository<TEntity> : IRepository where TEntity : class
+public abstract class Repository<TEntity> where TEntity : class
 {
     protected readonly DatabaseContext _databaseContext;
-    protected readonly IMapper _mapper;
+    protected readonly Mapper _mapper;
 
-    public Repository(DatabaseContext databaseContext, IMapper mapper)
+    public Repository(DatabaseContext databaseContext, Mapper mapper)
     {
         _databaseContext = databaseContext;
         _mapper = mapper;
@@ -39,7 +39,7 @@ public abstract class Repository<TEntity> : IRepository where TEntity : class
 
     public virtual async Task<TEntity> UpdateAsync(TEntity entity)
     {
-        _databaseContext.Entry(entity).State = EntityState.Modified;
+        _databaseContext.Entry(entity).State = EntityState.Unchanged;
         return await SaveAndDetachAsync(entity);
     }
 
@@ -63,7 +63,7 @@ public abstract class Repository<TEntity> : IRepository where TEntity : class
 
     protected async Task<TEntity> SaveAndDetachAsync(TEntity entity)
     {
-        var a = await _databaseContext.SaveChangesAsync();
+        await _databaseContext.SaveChangesAsync();
         _databaseContext.Entry(entity).State = EntityState.Detached;
         return entity;
     }

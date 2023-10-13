@@ -7,7 +7,7 @@ namespace RequestManager.API.Repositories;
 
 public class UserRepository : Repository<User>
 {
-    public UserRepository(DatabaseContext databaseContext, IMapper mapper) : base(databaseContext, mapper)
+    public UserRepository(DatabaseContext databaseContext, Mapper mapper) : base(databaseContext, mapper)
     {
     }
 }
