@@ -26,13 +26,13 @@ public class MappingProfile : Profile
 
             var methodInfo = type.GetMethod(mappingMethodName);
 
-            if (methodInfo is not null)
+            if (methodInfo != null)
             {
                 methodInfo.Invoke(instance, new object[] { this });
             }
             else
             {
-                var interfaces = type.GetInterfaces().Where(x => x.IsAssignableTo(mapFromType)).ToList();
+                var interfaces = type.GetInterfaces().Where(HasInterface).ToList();
 
                 if (interfaces.Count > 0)
                 {
