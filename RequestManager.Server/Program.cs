@@ -40,6 +40,16 @@ else
 
 app.UseHttpsRedirection();
 
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.UseAuthorization();
+
+app.MapControllers();
+app.MapBlazorHub();
+app.MapFallbackToPage("/_Host");
+
 app.Run();
 
 static IConfigurationBuilder ConfigureSerilogBuilder(IConfigurationBuilder builder) =>
