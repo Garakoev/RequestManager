@@ -1,4 +1,5 @@
 ﻿using RequestManager.API;
+using RequestManager.API.Common;
 using RequestManager.Core.Extensions;
 using RequestManager.Core.Handlers;
 using RequestManager.Core.Repositories;
@@ -34,11 +35,12 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         var connectionString = Configuration.GetConnectionString(ConnectionStringName) ?? throw new InvalidOperationException($"Connection string {ConnectionStringName} not found.");
+
         services.AddDatabaseContext(connectionString)
             .AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<User>>()
-            .AddClassesWithInterfaces(new[] { typeof(IHandler<,>), typeof(IAsyncHandler<,>), typeof(IService), typeof(Repository<>) }, new[] { typeof(AssemblyAnchor).Assembly });
+            .AddAutoMapper(typeof(MappingProfile))
+            .AddClassesWithInterfaces(new[] { typeof(IRepository), typeof(IService), typeof(IHandler<,>), typeof(IAsyncHandler<,>) }, new[] { typeof(AssemblyAnchor).Assembly });
 
-        services.AddAutoMapper(typeof(Program));
         // TODO: Добавить
         //services.AddDefaultIdentity<User>(options =>
         //{
