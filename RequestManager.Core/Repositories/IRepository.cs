@@ -1,4 +1,4 @@
-﻿namespace BlackSun.Core.Repositories;
+﻿namespace RequestManager.Core.Repositories;
 
 public interface IRepository
 {
