@@ -7,9 +7,9 @@
 		<Nullable>disable</Nullable>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<Folder Include="wwwroot\" />
-	</ItemGroup>
+	<Target Name="AfterBuild">
+		<Exec Command="npm run webpack-script" />
+	</Target>
 
 	<ItemGroup>
 		<PackageReference Include="MudBlazor" Version="6.11.0" />
@@ -22,6 +22,12 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\RequestManager.API\RequestManager.API.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Update="wwwroot\tsconfig.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 </Project>
