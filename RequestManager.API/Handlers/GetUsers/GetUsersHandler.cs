@@ -9,6 +9,7 @@ public record GetUsersResponse;
 public class GetUsersHandler : IAsyncHandler<GetUsersRequest, GetUsersResponse>
 {
     private readonly UserRepository _userRepository;
+    public RequestRepository request;
 
     public GetUsersHandler(UserRepository userRepository)
     {

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RequestManager.Database.Contexts;
@@ -11,9 +12,11 @@ using RequestManager.Database.Contexts;
 namespace RequestManager.Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20231015182439_Migration2")]
+    partial class Migration2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -387,14 +390,6 @@ namespace RequestManager.Database.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("Number")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PassportNumber")
-                        .HasMaxLength(6)
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PassportSeries")
-                        .HasMaxLength(4)
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("RegistrationDate")

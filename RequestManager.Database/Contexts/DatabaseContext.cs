@@ -12,6 +12,8 @@ namespace RequestManager.Database.Contexts;
 public class DatabaseContext : ApiAuthorizationDbContext<User>
 {
     public DbSet<Huesos> Huesoses { get; set; }
+    public DbSet<Request> Requests { get; set; }
+    public DbSet<Courier> Couriers { get; set; }
 
     public DatabaseContext(
         DbContextOptions options,
@@ -48,6 +50,7 @@ public class DatabaseContext : ApiAuthorizationDbContext<User>
         builder.Entity<User>().HasOne(x => x.CreatedBy).WithOne().HasForeignKey<User>(x => x.CreatedById);
         builder.Entity<User>().HasOne(x => x.UpdatedBy).WithOne().HasForeignKey<User>(x => x.UpdatedById);
         builder.Entity<User>().HasOne(x => x.DeletedBy).WithOne().HasForeignKey<User>(x => x.DeletedById);
+        builder.Entity<Request>().HasAlternateKey(x => x.Number);
         ConfigureSoftDeleteFilter(builder);
 
         base.OnModelCreating(builder);
