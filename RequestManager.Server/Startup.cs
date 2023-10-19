@@ -1,4 +1,11 @@
-﻿using RequestManager.API;
+﻿using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
+using MudBlazor.Services;
+using RequestManager.API;
 using RequestManager.API.Common;
 using RequestManager.Core.Extensions;
 using RequestManager.Core.Handlers;
@@ -8,12 +15,6 @@ using RequestManager.Database.Contexts;
 using RequestManager.Database.Extensions;
 using RequestManager.Database.Models;
 using RequestManager.Server.Areas.Identity;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System.Net.Mime;
 
@@ -117,6 +118,7 @@ public class Startup
     {
         services.AddRazorPages();
         services.AddServerSideBlazor();
+        services.AddMudServices();
         // TODO: Добавить
         //services.AddLiveReload(config =>
         //{

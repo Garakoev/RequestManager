@@ -6,15 +6,13 @@ namespace RequestManager.Database.Models;
 public class Courier : DatabaseEntity
 {
     [Required]
-    public string Surname { get; set; }
-
-    [Required]
     public string Name { get; set; }
-
-    public string? Patronymic { get; set; }
 
     [Required, StringLength(12)]
     public string PhoneNumber { get; set; }
+
+    [Required, StringLength(10)]
+    public string Passport { get; set; }
 
     public List<Request> Requests { get; set; }
 }

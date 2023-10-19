@@ -7,13 +7,11 @@ public class CourierDTO : IMapFrom<Courier>
 {
     public int Id { get; init; }
 
-    public string Surname { get; set; }
-
     public string Name { get; set; }
 
-    public string? Patronymic { get; set; }
-
     public string PhoneNumber { get; set; }
+
+    public string Passport { get; set; }
 
     public List<RequestDTO> Requests { get; set; }
 }

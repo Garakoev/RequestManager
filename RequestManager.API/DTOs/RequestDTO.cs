@@ -1,6 +1,5 @@
 ﻿using RequestManager.API.Common;
 using RequestManager.Database.Models;
-using System.ComponentModel.DataAnnotations;
 
 namespace RequestManager.API.DTOs;
 
@@ -8,23 +7,21 @@ public class RequestDTO : IMapFrom<Request>
 {
     public int Id { get; init; }
 
-    public int Number { get; set; }
-
     public DateTime RegistrationDate { get; set; }
-
-    public string SendersSurname { get; set; }
 
     public string SendersName { get; set; }
 
-    public string? SendersPatronymic { get; set; }
-
-    public int PassportSeries { get; set; }
-
-    public int PassportNumber { get; set; }
+    public string SendersPassport { get; set; }
 
     public string SendersPhoneNumber { get; set; }
 
-    public string CargoName { get; set; }
+    public string RecipientsName { get; set; }
+
+    public string RecipientsPassport { get; set; }
+
+    public string RecipientsPhoneNumber { get; set; }
+
+    public string CargoDescription { get; set; }
 
     public string DeliveryAddress { get; set; }
 

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RequestManager.Database.Contexts;
@@ -11,9 +12,11 @@ using RequestManager.Database.Contexts;
 namespace RequestManager.Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20231019152722_Migration6")]
+    partial class Migration6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -307,15 +310,17 @@ namespace RequestManager.Database.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Passport")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
+                    b.Property<string>("Patronymic")
+                        .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(12)
                         .HasColumnType("character varying(12)");
+
+                    b.Property<string>("Surname")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -370,7 +375,7 @@ namespace RequestManager.Database.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("CargoDescription")
+                    b.Property<string>("CargoName")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -384,14 +389,15 @@ namespace RequestManager.Database.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("Number")
+                        .HasColumnType("integer");
+
                     b.Property<string>("RecipientsName")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("RecipientsPassport")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
+                    b.Property<int>("RecipientsPassport")
+                        .HasColumnType("integer");
 
                     b.Property<string>("RecipientsPhoneNumber")
                         .IsRequired()
@@ -405,10 +411,8 @@ namespace RequestManager.Database.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("SendersPassport")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
+                    b.Property<int>("SendersPassport")
+                        .HasColumnType("integer");
 
                     b.Property<string>("SendersPhoneNumber")
                         .IsRequired()
@@ -420,6 +424,8 @@ namespace RequestManager.Database.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasAlternateKey("Number");
 
                     b.HasIndex("CourierId");
 

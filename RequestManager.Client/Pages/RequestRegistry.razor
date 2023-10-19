@@ -1,0 +1,50 @@
+﻿@page "/requests"
+@using System.Net.Http.Json
+@using MudBlazor
+@using RequestManager.API.Handlers.GetRequest;
+@using RequestManager.API.DTOs;
+
+<MudTable Items="@Requests" Dense=true Hover="true" CanCancelEdit=true Virtualize="true" HorizontalScrollbar="true" FixedHeader="true"
+          Filter="new Func<RequestDTO,bool>(x => FilterItem(x, _searchString))">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Requests</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<RequestDTO, object>(x=>x.Id)">Nr</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<RequestDTO, object>(x=>x.RegistrationDate)">Дата регистрации</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<RequestDTO, object>(x=>x.SendersName)">ФИО отправителя</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<RequestDTO, object>(x=>x.SendersPassport)">Паспортные данные отправителя</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<RequestDTO, object>(x=>x.SendersPhoneNumber)">Номер телефона отправителя</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<RequestDTO, object>(x=>x.RecipientsName)">ФИО получателя</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<RequestDTO, object>(x=>x.RecipientsPassport)">Паспортные данные получателя</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<RequestDTO, object>(x=>x.RecipientsPhoneNumber)">Номер телефона получателя</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<RequestDTO, object>(x=>x.CargoDescription)">Груз</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<RequestDTO, object>(x=>x.DeliveryAddress)">Адрес пункта выдачи</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<RequestDTO, object>(x=>x.Status)">Статус</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<RequestDTO, object>(x=>x.Comment)">Комментарий</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<RequestDTO, object>(x=>x.Courier.Name)">ФИО курьера</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<RequestDTO, object>(x=>x.Courier.PhoneNumber)">Номер телефона курьера</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Id</MudTd>
+        <MudTd DataLabel="Дата регистрации">@context.RegistrationDate.ToShortDateString()</MudTd>
+        <MudTd DataLabel="ФИО отправителя">@context.SendersName</MudTd>
+        <MudTd DataLabel="Паспортные данные отправителя">@context.SendersPassport</MudTd>
+        <MudTd DataLabel="Номер телефона отправителя">@context.SendersPhoneNumber</MudTd>
+        <MudTd DataLabel="ФИО получателя">@context.RecipientsName</MudTd>
+        <MudTd DataLabel="Паспортные данные получателя">@context.RecipientsPassport</MudTd>
+        <MudTd DataLabel="Номер телефона получателя">@context.RecipientsPhoneNumber</MudTd>
+        <MudTd DataLabel="Груз">@context.CargoDescription</MudTd>
+        <MudTd DataLabel="Адрес пункта выдачи">@context.DeliveryAddress</MudTd>
+        <MudTd DataLabel="Статус">@context.Status</MudTd>
+        <MudTd DataLabel="Комментарий">@context.Comment</MudTd>
+        <MudTd DataLabel="ФИО курьера">@context.Courier?.Name</MudTd>
+        <MudTd DataLabel="Номер телефона курьера">@context.Courier?.PhoneNumber</MudTd>
+    </RowTemplate>
+    
+     <PagerContent>
+         <MudTablePager />
+     </PagerContent>
+ </MudTable>

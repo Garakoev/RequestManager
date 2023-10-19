@@ -45,7 +45,7 @@ public sealed class DatabaseContext : ApiAuthorizationDbContext<User>
         builder.Entity<User>().HasOne(x => x.CreatedBy).WithOne().HasForeignKey<User>(x => x.CreatedById);
         builder.Entity<User>().HasOne(x => x.UpdatedBy).WithOne().HasForeignKey<User>(x => x.UpdatedById);
         builder.Entity<User>().HasOne(x => x.DeletedBy).WithOne().HasForeignKey<User>(x => x.DeletedById);
-        builder.Entity<Request>().HasAlternateKey(x => x.Number);
+
         ConfigureSoftDeleteFilter(builder);
 
         base.OnModelCreating(builder);
