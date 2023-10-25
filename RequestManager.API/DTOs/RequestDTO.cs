@@ -1,12 +1,11 @@
 ﻿using RequestManager.API.Common;
 using RequestManager.Database.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace RequestManager.API.DTOs;
 
-public class RequestDTO : IMapFrom<Request>
+public class RequestDTO : ClientEntityDTO, IMapFrom<Request>
 {
-    public int Id { get; init; }
-
     public DateTime RegistrationDate { get; set; }
 
     public string SendersName { get; set; }
