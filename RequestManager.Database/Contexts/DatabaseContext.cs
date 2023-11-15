@@ -1,10 +1,10 @@
-﻿using RequestManager.Database.Models;
-using RequestManager.Database.Models.Common.Interfaces;
-using Duende.IdentityServer.EntityFramework.Options;
+﻿using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Options;
+using RequestManager.Database.Models;
+using RequestManager.Database.Models.Common.Interfaces;
 using System.Linq.Expressions;
 
 namespace RequestManager.Database.Contexts;

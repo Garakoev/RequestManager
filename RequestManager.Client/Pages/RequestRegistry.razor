@@ -1,11 +1,13 @@
 ﻿@page "/requests"
 @using MudBlazor
 @using RequestManager.API.Handlers.GetRequest;
-@using RequestManager.API.DTOs; 
+@using RequestManager.API.DTOs;
+@using RequestManager.Shared;
 
-<MudTable Items="@Requests" Dense="true" Hover="true" Bordered="true" CanCancelEdit=true Virtualize="true" FixedHeader="true"
-          Filter="new Func<RequestDTO,bool>(x => FilterItem(x, _searchString))" MultiSelection="true" @bind-SelectedItems="_selectedRequests" Height="400px"
-          EditButtonPosition="TableEditButtonPosition.End" EditTrigger="TableEditTrigger.EditButton" ApplyButtonPosition="TableApplyButtonPosition.End">
+<MudTable Items="@Requests" Dense="true" Hover="true" Bordered="true" Virtualize="true" FixedHeader="true"
+          Filter="new Func<RequestDTO,bool>(x => FilterItem(x, _searchString))" MultiSelection="true" HorizontalScrollbar="true" @bind-SelectedItems="_selectedRequests" Height="400px"
+          EditTrigger="TableEditTrigger.EditButton" EditButtonPosition="TableEditButtonPosition.End" ApplyButtonPosition="TableApplyButtonPosition.End" CanCancelEdit=true
+          RowEditPreview="(o) => BackupRequest((RequestDTO) o)" RowEditCancel="(o) => RestoreRequest((RequestDTO) o)" RowEditCommit="async (o) => UpdateRequest((RequestDTO) o)">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Requests</MudText>
         <MudSpacer />
@@ -29,7 +31,7 @@
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Nr">@context.Id</MudTd>
-        <MudTd DataLabel="Дата регистрации">@context.RegistrationDate.ToShortDateString()</MudTd>
+        <MudTd DataLabel="Дата регистрации">@context.RegistrationDate.Value.ToShortDateString()</MudTd>
         <MudTd DataLabel="ФИО отправителя">@context.SendersName</MudTd>
         <MudTd DataLabel="Паспортные данные отправителя">@context.SendersPassport</MudTd>
         <MudTd DataLabel="Номер телефона отправителя">@context.SendersPhoneNumber</MudTd>
@@ -43,32 +45,61 @@
         <MudTd DataLabel="ФИО курьера">@context.Courier?.Name</MudTd>
         <MudTd DataLabel="Номер телефона курьера">@context.Courier?.PhoneNumber</MudTd>
     </RowTemplate>
-    @* <RowEditingTemplate>
+
+    <RowEditingTemplate>
+        <MudTd DataLabel="Nr">@context.Id</MudTd>
         <MudTd DataLabel="Дата регистрации">
-            <MudDatePicker @bind-Value="@context.RegistrationDate" Required />
-        </MudTd>
-         <MudTd DataLabel="ФИО отправителя">
-            <MudTextField @bind-Value="@context.SendersName" Required />
-        </MudTd>
-         <MudTd DataLabel="Паспортные данные отправителя">
-            <MudNumericField @bind-Value="@context.SendersPassport" Required Min="1" MaxLength="10" />
-        </MudTd>
-         <MudTd DataLabel="Номер телефона отправителя">
-            <MudTextField @bind-Value="@context.SendersPhoneNumber" Required />
-        </MudTd>
-         <MudTd DataLabel="ФИО получателя">
-             <MudTextField @bind-Value="@context.RecipientsName" Required />
+            <MudDatePicker @bind-Date="@context.RegistrationDate" Required RequiredError="Registration date is required" />
          </MudTd>
-    </RowEditingTemplate> *@
+         <MudTd DataLabel="ФИО отправителя">
+             <MudTextField @bind-Value="@context.SendersName" Required RequiredError="Senders name is required!" />
+         </MudTd>
+         <MudTd DataLabel="Паспортные данные отправителя">
+             <MudTextField @bind-Value="@context.SendersPassport" Required RequiredError="Senders passport is required!" Validation="@(new Func<string, IEnumerable<string>>(CheckPassportValue))" />
+         </MudTd>
+         <MudTd DataLabel="Номер телефона отправителя">
+             <MudTextField @bind-Value="@context.SendersPhoneNumber" Required RequiredError="Senders phone number is required!" />
+         </MudTd>
+         <MudTd DataLabel="ФИО получателя">
+             <MudTextField @bind-Value="@context.RecipientsName" Required RequiredError="Recipients name is required!" />
+         </MudTd>
+         <MudTd DataLabel="Паспортные данные получателя">
+             <MudTextField @bind-Value="@context.RecipientsPassport" Required RequiredError="Recipients passport is required!" Validation="@(new Func<string, IEnumerable<string>>(CheckPassportValue))" />
+         </MudTd>
+         <MudTd DataLabel="Номер телефона получателя">
+             <MudTextField @bind-Value="@context.RecipientsPhoneNumber" Required RequiredError="Recipients phone number is required!" />
+         </MudTd>
+         <MudTd DataLabel="Груз">
+             <MudTextField @bind-Value="@context.CargoDescription" Required RequiredError="Cargo description is required!" />
+         </MudTd>
+         <MudTd DataLabel="Адрес пункта выдачи">
+             <MudTextField @bind-Value="@context.DeliveryAddress" Required RequiredError="Address of the pick-up point is required!" />
+         </MudTd>
+         <MudTd DataLabel="Статус">@context.Status</MudTd>
+         <MudTd DataLabel="Комментарий">@context.Comment</MudTd>
+         <MudTd DataLabel="ФИО курьера">
+             <MudSelect @bind-Value="@context.Courier">
+                 @foreach (var courier in Couriers)
+                {
+                    <MudSelectItem Value="@courier">@courier.Name</MudSelectItem>
+                }
+            </MudSelect>
+        </MudTd>
+        <MudTd DataLabel="Номер телефона курьера">@context.Courier?.PhoneNumber</MudTd>
+    </RowEditingTemplate>
+
     <PagerContent>
-        <MudTooltip Text="Add new record">
-            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="@OpenAddRequestDialog" />
+        <MudTooltip Text="Add request">
+            <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="OpenAddRequestDialog" />
+        </MudTooltip>
+        <MudTooltip Text="Delete request">
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="DeleteRequest" />
         </MudTooltip>
         <MudTablePager>
         </MudTablePager>
     </PagerContent>
     <EditButtonContent Context="button">
-        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" />
+        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
     </EditButtonContent>
 </MudTable>
 
@@ -79,13 +110,15 @@
         </MudText>
     </TitleContent>
     <DialogContent>
-        <MudForm @ref="_form">
-            <MudDatePicker Label="Registration date" Date="TempRequest.RegistrationDate" Editable="true" Placeholder="Select Date" Variant="Variant.Filled" Required="true" RequiredError="Registration date is required" />
+        <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
+            <MudDatePicker Label="Registration date" @bind-Date="TempRequest.RegistrationDate" Editable="true" Placeholder="Select Date" Variant="Variant.Filled" Required="true" RequiredError="Registration date is required" />
             <MudTextField T="string" @bind-Value="TempRequest.SendersName" Label="Senders name" Required="true" RequiredError="Senders name is required!" Variant="Variant.Filled" Clearable="true" />
-            <MudNumericField @bind-Text="TempRequest.SendersPassport" HideSpinButtons="true" Label="Senders passport" Required="true" HelperText="Write the series and number together" Variant="Variant.Filled" Min="0" MaxLength="10" Clearable="true" />
+            <MudTextField @bind-Value="TempRequest.SendersPassport" Label="Senders passport" Required="true" HelperText="Write the series and number together" Variant="Variant.Filled" Clearable="true"
+                          Validation="@(new Func<string, IEnumerable<string>>(CheckPassportValue))" />
             <MudTextField T="string" @bind-Value="TempRequest.SendersPhoneNumber" Label="Senders phone number" Required="true" RequiredError="Senders phone number is required!" Variant="Variant.Filled" Clearable="true" />
             <MudTextField T="string" @bind-Value="TempRequest.RecipientsName" Label="Recipients name" Required="true" RequiredError="Recipients name is required!" Variant="Variant.Filled" Clearable="true" />
-            <MudNumericField @bind-Text="TempRequest.RecipientsPassport" HideSpinButtons="true" Label="Recipients passport" Required="true" HelperText="Write the series and number together" Variant="Variant.Filled" Min="0" MaxLength="10" Clearable="true" />
+            <MudTextField @bind-Value="TempRequest.RecipientsPassport" Label="Recipients passport" Required="true" HelperText="Write the series and number together" Variant="Variant.Filled" Clearable="true"
+                          Validation="@(new Func<string, IEnumerable<string>>(CheckPassportValue))" />
             <MudTextField T="string" @bind-Value="TempRequest.RecipientsPhoneNumber" Label="Recipients phone number" Required="true" RequiredError="Recipients phone number is required!" Variant="Variant.Filled" Clearable="true" />
             <MudTextField T="string" @bind-Value="TempRequest.CargoDescription" Label="Cargo description" Required="true" RequiredError="Cargo description is required!" Variant="Variant.Filled" Lines="3" Clearable="true" />
             <MudTextField T="string" @bind-Value="TempRequest.DeliveryAddress" Label="Address of the pick-up point" Required="true" RequiredError="Address of the pick-up point is required!" Variant="Variant.Filled" Clearable="true" />
@@ -93,7 +126,7 @@
         </MudForm>
     </DialogContent>
     <DialogActions>
-        <MudButton Variant="Variant.Filled" Color="Color.Secondary" DisableElevation="true" OnClick="@(()=>_form.ResetAsync())" Class="mx-2">Reset</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="px-10" OnClick="@AddRequest">Register</MudButton>
+        <MudIconButton Icon="@Icons.Material.Filled.ClearAll" Size="Size.Large" Variant="Variant.Filled" Color="Color.Secondary" OnClick="@(()=>_form.ResetAsync())">Reset</MudIconButton>
+        <MudIconButton Icon="@Icons.Material.Filled.Check" Size="Size.Large" Variant="Variant.Filled" Color="Color.Primary" OnClick="@AddRequest" Disabled="@(!_success)">Register</MudIconButton>
     </DialogActions>
 </MudDialog>

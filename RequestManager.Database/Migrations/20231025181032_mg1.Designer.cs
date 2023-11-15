@@ -12,15 +12,15 @@ using RequestManager.Database.Contexts;
 namespace RequestManager.Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20231025153327_dsgds12")]
-    partial class dsgds12
+    [Migration("20231025181032_mg1")]
+    partial class Mg1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.12")
+                .HasAnnotation("ProductVersion", "7.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -307,12 +307,15 @@ namespace RequestManager.Database.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Passport")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -369,6 +372,7 @@ namespace RequestManager.Database.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("CargoDescription")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Comment")
@@ -378,31 +382,42 @@ namespace RequestManager.Database.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("DeliveryAddress")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("RecipientsName")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("RecipientsPassport")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
 
                     b.Property<string>("RecipientsPhoneNumber")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(12)
+                        .HasColumnType("character varying(12)");
 
                     b.Property<DateTime>("RegistrationDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("SendersName")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("SendersPassport")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
 
                     b.Property<string>("SendersPhoneNumber")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(12)
+                        .HasColumnType("character varying(12)");
 
-                    b.Property<string>("Status")
-                        .HasColumnType("text");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 

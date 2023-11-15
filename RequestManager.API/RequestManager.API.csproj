@@ -20,6 +20,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\RequestManager.Core\RequestManager.Core.csproj" />
 		<ProjectReference Include="..\RequestManager.Database\RequestManager.Database.csproj" />
+		<ProjectReference Include="..\RequestManager.Shared\RequestManager.Shared.csproj" />
 	</ItemGroup>
 
 </Project>

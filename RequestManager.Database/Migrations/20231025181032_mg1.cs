@@ -1,10 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+
+#nullable disable
 
 namespace RequestManager.Database.Migrations;
 
 /// <inheritdoc />
-public partial class Initial : Migration
+public partial class Mg1 : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -67,6 +70,21 @@ public partial class Initial : Migration
                     column: x => x.UpdatedById,
                     principalTable: "AspNetUsers",
                     principalColumn: "Id");
+            });
+
+        migrationBuilder.CreateTable(
+            name: "Couriers",
+            columns: table => new
+            {
+                Id = table.Column<long>(type: "bigint", nullable: false)
+                    .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                Name = table.Column<string>(type: "text", nullable: false),
+                PhoneNumber = table.Column<string>(type: "text", nullable: false),
+                Passport = table.Column<string>(type: "text", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("PK_Couriers", x => x.Id);
             });
 
         migrationBuilder.CreateTable(
@@ -266,6 +284,35 @@ public partial class Initial : Migration
                     principalColumn: "Id");
             });
 
+        migrationBuilder.CreateTable(
+            name: "Requests",
+            columns: table => new
+            {
+                Id = table.Column<long>(type: "bigint", nullable: false)
+                    .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                RegistrationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                SendersName = table.Column<string>(type: "text", nullable: false),
+                SendersPassport = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
+                SendersPhoneNumber = table.Column<string>(type: "character varying(12)", maxLength: 12, nullable: false),
+                RecipientsName = table.Column<string>(type: "text", nullable: false),
+                RecipientsPassport = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
+                RecipientsPhoneNumber = table.Column<string>(type: "character varying(12)", maxLength: 12, nullable: false),
+                CargoDescription = table.Column<string>(type: "text", nullable: false),
+                DeliveryAddress = table.Column<string>(type: "text", nullable: false),
+                Status = table.Column<int>(type: "integer", nullable: false),
+                Comment = table.Column<string>(type: "text", nullable: true),
+                CourierId = table.Column<long>(type: "bigint", nullable: true)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("PK_Requests", x => x.Id);
+                table.ForeignKey(
+                    name: "FK_Requests_Couriers_CourierId",
+                    column: x => x.CourierId,
+                    principalTable: "Couriers",
+                    principalColumn: "Id");
+            });
+
         migrationBuilder.CreateIndex(
             name: "IX_AspNetRoleClaims_RoleId",
             table: "AspNetRoleClaims",
@@ -371,6 +418,11 @@ public partial class Initial : Migration
             name: "IX_PersistedGrants_SubjectId_SessionId_Type",
             table: "PersistedGrants",
             columns: new[] { "SubjectId", "SessionId", "Type" });
+
+        migrationBuilder.CreateIndex(
+            name: "IX_Requests_CourierId",
+            table: "Requests",
+            column: "CourierId");
     }
 
     /// <inheritdoc />
@@ -404,9 +456,15 @@ public partial class Initial : Migration
             name: "PersistedGrants");
 
         migrationBuilder.DropTable(
+            name: "Requests");
+
+        migrationBuilder.DropTable(
             name: "AspNetRoles");
 
         migrationBuilder.DropTable(
             name: "AspNetUsers");
+
+        migrationBuilder.DropTable(
+            name: "Couriers");
     }
 }
