@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -40,7 +41,7 @@ public class Startup
         services.AddDatabaseContext(connectionString)
             .AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<User>>()
             .AddAutoMapper(typeof(MappingProfile))
-            .AddClassesWithInterfaces(new[] { typeof(IRepository), typeof(IService), typeof(IHandler<,>), typeof(IAsyncHandler<,>) }, new[] { typeof(AssemblyAnchor).Assembly });
+            .AddClassesWithInterfaces(new[] { typeof(IRepository), typeof(IService), typeof(IHandler<,>), typeof(IAsyncHandler<,>), typeof(IValidator<>) }, new[] { typeof(AssemblyAnchor).Assembly });
 
         // TODO: Добавить
         //services.AddDefaultIdentity<User>(options =>

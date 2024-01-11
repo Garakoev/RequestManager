@@ -1,7 +1,9 @@
 ﻿@page "/requests"
+@using FluentValidation;
 @using MudBlazor
 @using RequestManager.API.Handlers.GetRequest;
 @using RequestManager.API.DTOs;
+@using RequestManager.Core.Extensions;
 @using RequestManager.Shared;
 
 <MudTable Items="@Requests" Dense="true" Hover="true" Bordered="true" Virtualize="true" FixedHeader="true"
@@ -55,7 +57,7 @@
              <MudTextField @bind-Value="@context.SendersName" Required RequiredError="Senders name is required!" />
          </MudTd>
          <MudTd DataLabel="Паспортные данные отправителя">
-             <MudTextField @bind-Value="@context.SendersPassport" Required RequiredError="Senders passport is required!" Validation="@(new Func<string, IEnumerable<string>>(CheckPassportValue))" />
+             <MudTextField @bind-Value="@context.SendersPassport" Required RequiredError="Senders passport is required!" />
          </MudTd>
          <MudTd DataLabel="Номер телефона отправителя">
              <MudTextField @bind-Value="@context.SendersPhoneNumber" Required RequiredError="Senders phone number is required!" />
@@ -64,7 +66,7 @@
              <MudTextField @bind-Value="@context.RecipientsName" Required RequiredError="Recipients name is required!" />
          </MudTd>
          <MudTd DataLabel="Паспортные данные получателя">
-             <MudTextField @bind-Value="@context.RecipientsPassport" Required RequiredError="Recipients passport is required!" Validation="@(new Func<string, IEnumerable<string>>(CheckPassportValue))" />
+             <MudTextField @bind-Value="@context.RecipientsPassport" Required RequiredError="Recipients passport is required!" />
          </MudTd>
          <MudTd DataLabel="Номер телефона получателя">
              <MudTextField @bind-Value="@context.RecipientsPhoneNumber" Required RequiredError="Recipients phone number is required!" />
@@ -78,7 +80,7 @@
          <MudTd DataLabel="Статус">@context.Status</MudTd>
          <MudTd DataLabel="Комментарий">@context.Comment</MudTd>
          <MudTd DataLabel="ФИО курьера">
-             <MudSelect @bind-Value="@context.Courier">
+             <MudSelect @bind-Value="@context.Courier" ToStringFunc="@(x => x?.Name ?? "Choose Courier")">
                  @foreach (var courier in Couriers)
                 {
                     <MudSelectItem Value="@courier">@courier.Name</MudSelectItem>
@@ -99,7 +101,7 @@
         </MudTablePager>
     </PagerContent>
     <EditButtonContent Context="button">
-        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
+        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" />
     </EditButtonContent>
 </MudTable>
 
@@ -111,14 +113,14 @@
     </TitleContent>
     <DialogContent>
         <MudForm @ref="_form" @bind-IsValid="@_success" @bind-Errors="@_errors">
-            <MudDatePicker Label="Registration date" @bind-Date="TempRequest.RegistrationDate" Editable="true" Placeholder="Select Date" Variant="Variant.Filled" Required="true" RequiredError="Registration date is required" />
+            <MudDatePicker Label="Registration date" @bind-Date="TempRequest.RegistrationDate" Editable="true" Placeholder="Select Date" Variant="Variant.Filled"
+                           Validation="@(Validator.GetValidateFunc<RequestDTO, DateTime?>(TempRequest, x => x.IncludeProperties(nameof(RequestDTO.RegistrationDate))))" />
             <MudTextField T="string" @bind-Value="TempRequest.SendersName" Label="Senders name" Required="true" RequiredError="Senders name is required!" Variant="Variant.Filled" Clearable="true" />
-            <MudTextField @bind-Value="TempRequest.SendersPassport" Label="Senders passport" Required="true" HelperText="Write the series and number together" Variant="Variant.Filled" Clearable="true"
-                          Validation="@(new Func<string, IEnumerable<string>>(CheckPassportValue))" />
+            <MudTextField @bind-Value="TempRequest.SendersPassport" Label="Senders passport" HelperText="Write the series and number together" Variant="Variant.Filled" Clearable="true"
+                          Validation="@(Validator.GetValidateFunc<RequestDTO, string>(TempRequest, x => x.IncludeProperties(nameof(RequestDTO.SendersPassport))))" />
             <MudTextField T="string" @bind-Value="TempRequest.SendersPhoneNumber" Label="Senders phone number" Required="true" RequiredError="Senders phone number is required!" Variant="Variant.Filled" Clearable="true" />
             <MudTextField T="string" @bind-Value="TempRequest.RecipientsName" Label="Recipients name" Required="true" RequiredError="Recipients name is required!" Variant="Variant.Filled" Clearable="true" />
-            <MudTextField @bind-Value="TempRequest.RecipientsPassport" Label="Recipients passport" Required="true" HelperText="Write the series and number together" Variant="Variant.Filled" Clearable="true"
-                          Validation="@(new Func<string, IEnumerable<string>>(CheckPassportValue))" />
+            <MudTextField @bind-Value="TempRequest.RecipientsPassport" Label="Recipients passport" Required="true" HelperText="Write the series and number together" Variant="Variant.Filled" Clearable="true" />
             <MudTextField T="string" @bind-Value="TempRequest.RecipientsPhoneNumber" Label="Recipients phone number" Required="true" RequiredError="Recipients phone number is required!" Variant="Variant.Filled" Clearable="true" />
             <MudTextField T="string" @bind-Value="TempRequest.CargoDescription" Label="Cargo description" Required="true" RequiredError="Cargo description is required!" Variant="Variant.Filled" Lines="3" Clearable="true" />
             <MudTextField T="string" @bind-Value="TempRequest.DeliveryAddress" Label="Address of the pick-up point" Required="true" RequiredError="Address of the pick-up point is required!" Variant="Variant.Filled" Clearable="true" />

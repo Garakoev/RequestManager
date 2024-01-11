@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using RequestManager.API.DTOs;
@@ -7,6 +8,7 @@ using RequestManager.API.Handlers.DeleteRequestHandler;
 using RequestManager.API.Handlers.GetAllCouriers;
 using RequestManager.API.Handlers.GetRequest;
 using RequestManager.API.Handlers.UpdateRequestHandler;
+using RequestManager.API.Validators;
 using RequestManager.Shared;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -27,18 +29,21 @@ public partial class RequestRegistry
 
     [Inject] private IMapper Mapper { get; set; }
 
+    [Inject] private RequestValidator Validator { get; set; }
+
     private List<RequestDTO> Requests { get; set; }
 
     private List<CourierDTO> Couriers { get; set; }
 
     private HashSet<RequestDTO> _selectedRequests = new();
 
-    private RequestDTO BackupRequestItem { get; set; } = new();
+    private object BackupRequestItem { get; set; }
 
     private MudForm _form;
     private string _searchString = "";
     private bool _visible = false;
     private bool _success;
+    private bool _checkItemForUpdate;
     private string[] _errors = Array.Empty<string>();
 
     private RequestDTO TempRequest { get; set; } = new();
@@ -81,18 +86,13 @@ public partial class RequestRegistry
 
     private async void AddRequest()
     {
-        if (TempRequest.RegistrationDate != null && TempRequest.SendersName != null && TempRequest.SendersPassport != null &&
-            TempRequest.SendersPhoneNumber != null && TempRequest.RecipientsName != null && TempRequest.RecipientsPassport != null &&
-            TempRequest.RecipientsPhoneNumber != null && TempRequest.CargoDescription != null && TempRequest.DeliveryAddress != null)
-        {
-            var utcDateTime = DateTime.SpecifyKind(TempRequest.RegistrationDate.Value, DateTimeKind.Utc);
-            TempRequest.RegistrationDate = utcDateTime;
-            var request = new AddRequestRequest(TempRequest);
-            var requestDTO = (await AddRequestHandler.Handle(request)).RequestDTO;
-            Requests.Add(requestDTO);
-            StateHasChanged();
-            await _form.ResetAsync();
-        }
+        var utcDateTime = DateTime.SpecifyKind(TempRequest.RegistrationDate.Value, DateTimeKind.Utc);
+        TempRequest.RegistrationDate = utcDateTime;
+        var request = new AddRequestRequest(TempRequest);
+        var requestDTO = (await AddRequestHandler.Handle(request)).RequestDTO;
+        Requests.Add(requestDTO);
+        StateHasChanged();
+        await _form.ResetAsync();
     }
 
     private async void DeleteRequest()
@@ -118,22 +118,5 @@ public partial class RequestRegistry
     private void RestoreRequest(RequestDTO requestDTO)
     {
         Mapper.Map(BackupRequestItem, requestDTO);
-    }
-
-    private static IEnumerable<string> CheckPassportValue(string passport)
-    {
-        if (string.IsNullOrWhiteSpace(passport))
-        {
-            yield return "Passport is required!";
-            yield break;
-        }
-        else if (!Regex.IsMatch(passport, @"[0-9]"))
-        {
-            yield return "Passport must contain only numbers";
-        }
-        else if (passport.Length != 10)
-        {
-            yield return "Passport must be of length 10";
-        }
     }
 }

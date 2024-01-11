@@ -2,6 +2,7 @@
 using RequestManager.API.DTOs;
 using RequestManager.API.Repositories;
 using RequestManager.Core.Handlers;
+using Microsoft.EntityFrameworkCore;
 
 namespace RequestManager.API.Handlers.GetRequest;
 
@@ -21,7 +22,7 @@ public class GetRequestsHandler : IAsyncHandler<GetRequestsRequest, GetRequestsR
 
     public async Task<GetRequestsResponse> Handle(GetRequestsRequest request = null)
     {
-        var requests = await _requestRepository.GetAsync();
+        var requests = await _requestRepository.GetAsync(x => x.Include(x => x.Courier));
         var requestsDTO = requests.Select(_mapper.Map<RequestDTO>).ToList();
 
         return new GetRequestsResponse(requestsDTO);
